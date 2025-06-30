@@ -1,0 +1,68 @@
+:root {
+  --cor1: #302b63;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: var(--cor1);
+  color: #fff;
+}
+
+#informacoes {
+  min-height: 50px;
+  margin: 0px auto;
+}
+
+#botao {
+  font-size: 1.4rem;
+  font-weight: bold;
+  background-color: rgb(146, 157, 157);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+  color: #fff;
+}
+
+#botao:hover {
+  color: var(--cor1);
+}
+
+#tabuleiro {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: min-content;
+  padding-top: 25px;
+}
+
+.posicao {
+  width: 150px;
+  height: 150px;
+  font-size: 90px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 150px;
+  background-color: var(--cor1);
+  border: 10px solid #fff;
+}
+
+.posicao-cima {
+  border-top: none;
+}
+
+.posicao-esquerda {
+  border-left: none;
+}
+
+.posicao-direita {
+  border-right: none;
+}
+
+.posicao-baixo {
+  border-bottom: none;
+}
