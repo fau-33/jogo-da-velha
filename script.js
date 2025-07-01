@@ -10,6 +10,7 @@ class JogadorAleatorio {
     this.simbolo = simbolo;
     this.humano = false;
   }
+
   jogar(tabuleiro) {
     let linha = this.#aleatorio(1, tabuleiro.length);
     let coluna = this.#aleatorio(1, tabuleiro.length);
@@ -21,14 +22,17 @@ class JogadorAleatorio {
     return Math.floor(valor);
   }
 }
+
 class Jogada {
   constructor(linha, coluna) {
     this.linha = linha;
     this.coluna = coluna;
   }
+
   get valida() {
     return this.linha > 0 && this.coluna > 0;
   }
+
   get invalida() {
     return !this.valida;
   }
@@ -45,6 +49,7 @@ class JogoDaVelha {
     this.tamanho = tamanho;
     this.zerar();
   }
+
   #iniciarTabuleiro() {
     return Array(this.tamanho)
       .fill(0)
@@ -154,6 +159,7 @@ class JogoDaVelha {
     this.jogadorAtual = this.jogador1;
     this.vencedor = null;
   }
+
   toString() {
     let matriz = this.tabuleiro
       .map((linha) => linha.map((posicao) => posicao ?? "-").join(" "))
@@ -161,40 +167,66 @@ class JogoDaVelha {
     let quemVenceu = this.vencedor ? `Vencedor: ${this.vencedor}` : "";
     return `${matriz}\n ${quemVenceu}`;
   }
+  status() {
+    if (this.vencedor === "-") {
+      return "Empate !!!";
+    } else if (this.vencedor) {
+      return ` ${this.vencedor} Venceu!`;
+    } else {
+      return `É a vez de ${this.jogadorAtual.simbolo}`;
+    }
+  }
 }
 
-// const jogo = new JogoDaVelha(new JogadorHumano("X"), new JogadorAleatorio("O"));
-// jogo.jogar(new Jogada(1, 1)); // X
-// jogo.jogar(new Jogada(2, 2)); // O
-// jogo.jogar(new Jogada(1, 3)); // X
-// jogo.jogar(new Jogada(1, 2)); // O
-// jogo.jogar(new Jogada(3, 1)); // X
-// jogo.jogar(new Jogada(3, 2)); // O
-// jogo.jogar(new Jogada(3, 2)); // X
-// jogo.jogar(new Jogada(3, 1)); // O
-// jogo.jogar(new Jogada(3, 3)); // O
-
-// console.log(jogo.toString());
-
-class jogoDaVelhaDom {
+class JogoDaVelhaDom {
   constructor(tabuleiro, informacoes) {
     this.tabuleiro = tabuleiro;
     this.informacoes = informacoes;
   }
+
   inicializar(jogo) {
     this.jogo = jogo;
     this.#deixarTabuleiroJogavel();
+    this.#imprimirSimbolos();
   }
+
   #deixarTabuleiroJogavel() {
     const posicoes = this.tabuleiro.getElementsByClassName("posicao");
     for (let posicao of posicoes) {
       posicao.addEventListener("click", (e) => {
+        if (this.jogo.vencedor) {
+          return;
+        }
+        //console.log(e.target);
         let posicaoSelecionada = e.target.attributes;
         let linha = +posicaoSelecionada.linha.value;
         let coluna = +posicaoSelecionada.coluna.value;
-        console.log(`Linha: ${linha}, Coluna: ${coluna}`);
+        //console.log(`Cliquei em ${linha}, ${coluna}`);
+        this.jogo.jogar(new Jogada(linha, coluna));
+        this.informacoes.innerText = this.jogo.status();
+        //console.log(this.jogo.toString());
+        this.#imprimirSimbolos();
       });
     }
+  }
+
+  #imprimirSimbolos() {
+    let { tabuleiro } = this.jogo;
+    let qtdeLinhas = tabuleiro.length;
+    let qtdeColunas = tabuleiro[0].length;
+    let posicoes = this.tabuleiro.getElementsByClassName("posicao");
+    for (let linha = 0; linha < qtdeLinhas; linha++) {
+      for (let coluna = 0; coluna < qtdeColunas; coluna++) {
+        let indiceDaInterface = linha * qtdeColunas + coluna;
+        posicoes[indiceDaInterface].innerText = tabuleiro[linha][coluna];
+      }
+    }
+  }
+  zerar() {
+    this.jogo.zerar();
+    let posicoes = document.getElementsByClassName("posicao");
+    [...posicoes].forEach((posicao) => (posicao.innerText = ""));
+    this.informacoes.innerText = this.jogo.status();
   }
 }
 
@@ -202,8 +234,18 @@ class jogoDaVelhaDom {
   const botaoIniciar = document.getElementById("iniciar");
   const informacoes = document.getElementById("informacoes");
   const tabuleiro = document.getElementById("tabuleiro");
-  const jogo = new JogoDaVelha(new JogadorHumano("X"), new JogadorHumano("O"));
 
-  const jogoDom = new jogoDaVelhaDom(tabuleiro, informacoes);
+  // Certifique-se de que as classes estão corretamente nomeadas
+  const jogo = new JogoDaVelha(
+    new JogadorHumano("X"),
+    new JogadorAleatorio("O")
+  );
+
+  // Use o nome correto da classe (JogoDaVelhaDom)
+  const jogoDom = new JogoDaVelhaDom(tabuleiro, informacoes);
   jogoDom.inicializar(jogo);
+
+  botaoIniciar.addEventListener("click", () => {
+    jogoDom.zerar();
+  });
 })();
