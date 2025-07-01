@@ -163,9 +163,9 @@ class JogoDaVelha {
   }
 }
 
-const jogo = new JogoDaVelha(new JogadorHumano("X"), new JogadorAleatorio("O"));
-jogo.jogar(new Jogada(1, 1)); // X
-jogo.jogar(new Jogada(2, 2)); // O
+// const jogo = new JogoDaVelha(new JogadorHumano("X"), new JogadorAleatorio("O"));
+// jogo.jogar(new Jogada(1, 1)); // X
+// jogo.jogar(new Jogada(2, 2)); // O
 // jogo.jogar(new Jogada(1, 3)); // X
 // jogo.jogar(new Jogada(1, 2)); // O
 // jogo.jogar(new Jogada(3, 1)); // X
@@ -174,4 +174,36 @@ jogo.jogar(new Jogada(2, 2)); // O
 // jogo.jogar(new Jogada(3, 1)); // O
 // jogo.jogar(new Jogada(3, 3)); // O
 
-console.log(jogo.toString());
+// console.log(jogo.toString());
+
+class jogoDaVelhaDom {
+  constructor(tabuleiro, informacoes) {
+    this.tabuleiro = tabuleiro;
+    this.informacoes = informacoes;
+  }
+  inicializar(jogo) {
+    this.jogo = jogo;
+    this.#deixarTabuleiroJogavel();
+  }
+  #deixarTabuleiroJogavel() {
+    const posicoes = this.tabuleiro.getElementsByClassName("posicao");
+    for (let posicao of posicoes) {
+      posicao.addEventListener("click", (e) => {
+        let posicaoSelecionada = e.target.attributes;
+        let linha = +posicaoSelecionada.linha.value;
+        let coluna = +posicaoSelecionada.coluna.value;
+        console.log(`Linha: ${linha}, Coluna: ${coluna}`);
+      });
+    }
+  }
+}
+
+(function () {
+  const botaoIniciar = document.getElementById("iniciar");
+  const informacoes = document.getElementById("informacoes");
+  const tabuleiro = document.getElementById("tabuleiro");
+  const jogo = new JogoDaVelha(new JogadorHumano("X"), new JogadorHumano("O"));
+
+  const jogoDom = new jogoDaVelhaDom(tabuleiro, informacoes);
+  jogoDom.inicializar(jogo);
+})();
