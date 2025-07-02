@@ -186,6 +186,7 @@ class JogoDaVelhaDom {
 
   inicializar(jogo) {
     this.jogo = jogo;
+    this.#criarTabuleiro();
     this.#deixarTabuleiroJogavel();
     this.#imprimirSimbolos();
   }
@@ -222,6 +223,36 @@ class JogoDaVelhaDom {
       }
     }
   }
+  #criarTabuleiro() {
+    const tamanho = this.jogo.tamanho;
+    let posicoes = [];
+    for (let linha = 1; linha <= tamanho; linha++) {
+      const colunas = this.#criarLinhaTabuleiro(linha, tamanho);
+      posicoes.push(...colunas);
+    }
+    this.tabuleiro.innerHTML = [...posicoes].join("");
+    this.tabuleiro.style.gridTemplateColumns = `repeat(${tamanho}, 1fr)`;
+  }
+  #criarLinhaTabuleiro(linha, tamanho) {
+    let colunas = [];
+    for (let coluna = 1; coluna <= tamanho; coluna++) {
+      let classes = "posicao ";
+      if (linha === 1) {
+        classes += "posicao-cima ";
+      } else if (linha === tamanho) {
+        classes += "posicao-baixo ";
+      }
+
+      if (coluna === 1) {
+        classes += "posicao-esquerda ";
+      } else if (coluna === tamanho) {
+        classes += "posicao-direita ";
+      }
+      const elemento = `<div class="${classes}" linha="${linha}" coluna="${coluna}"></div>`;
+      colunas.push(elemento);
+    }
+    return colunas;
+  }
   zerar() {
     this.jogo.zerar();
     let posicoes = document.getElementsByClassName("posicao");
@@ -234,16 +265,25 @@ class JogoDaVelhaDom {
   const botaoIniciar = document.getElementById("iniciar");
   const informacoes = document.getElementById("informacoes");
   const tabuleiro = document.getElementById("tabuleiro");
+  const inputTamanho = document.getElementById("tamanho");
 
-  // Certifique-se de que as classes estão corretamente nomeadas
-  const jogo = new JogoDaVelha(
-    new JogadorHumano("X"),
-    new JogadorAleatorio("O")
-  );
+  const novoJogo = (tamanho) => {
+    const jogo = new JogoDaVelha(
+      new JogadorHumano("X"),
+      new JogadorHumano("O"),
+      tamanho
+    );
+    return jogo;
+  };
 
   // Use o nome correto da classe (JogoDaVelhaDom)
   const jogoDom = new JogoDaVelhaDom(tabuleiro, informacoes);
-  jogoDom.inicializar(jogo);
+  jogoDom.inicializar(novoJogo());
+
+  inputTamanho.addEventListener("input", () => {
+    let tamanho = +inputTamanho.value;
+    jogoDom.inicializar(novoJogo(tamanho));
+  });
 
   botaoIniciar.addEventListener("click", () => {
     jogoDom.zerar();
